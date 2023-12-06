@@ -11,10 +11,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityGameFramework.Runtime;
 
-namespace StarForce
-{
-    public abstract class UGuiForm : UIFormLogic
-    {
+namespace StarForce {
+    public abstract class UGuiForm : UIFormLogic {
         public const int DepthFactor = 100;
         private const float FadeTime = 0.3f;
 
@@ -23,48 +21,33 @@ namespace StarForce
         private CanvasGroup m_CanvasGroup = null;
         private List<Canvas> m_CachedCanvasContainer = new List<Canvas>();
 
-        public int OriginalDepth
-        {
-            get;
-            private set;
+        public int OriginalDepth { get; private set; }
+
+        public int Depth {
+            get { return m_CachedCanvas.sortingOrder; }
         }
 
-        public int Depth
-        {
-            get
-            {
-                return m_CachedCanvas.sortingOrder;
-            }
-        }
-
-        public void Close()
-        {
+        public void Close() {
             Close(false);
         }
 
-        public void Close(bool ignoreFade)
-        {
+        public void Close(bool ignoreFade) {
             StopAllCoroutines();
 
-            if (ignoreFade)
-            {
+            if (ignoreFade) {
                 GameEntry.UI.CloseUIForm(this);
             }
-            else
-            {
+            else {
                 StartCoroutine(CloseCo(FadeTime));
             }
         }
 
-        public void PlayUISound(int uiSoundId)
-        {
+        public void PlayUISound(int uiSoundId) {
             GameEntry.Sound.PlayUISound(uiSoundId);
         }
 
-        public static void SetMainFont(Font mainFont)
-        {
-            if (mainFont == null)
-            {
+        public static void SetMainFont(Font mainFont) {
+            if (mainFont == null) {
                 Log.Error("Main font is invalid.");
                 return;
             }
@@ -95,11 +78,9 @@ namespace StarForce
             gameObject.GetOrAddComponent<GraphicRaycaster>();
 
             Text[] texts = GetComponentsInChildren<Text>(true);
-            for (int i = 0; i < texts.Length; i++)
-            {
+            for (int i = 0; i < texts.Length; i++) {
                 texts[i].font = s_MainFont;
-                if (!string.IsNullOrEmpty(texts[i].text))
-                {
+                if (!string.IsNullOrEmpty(texts[i].text)) {
                     texts[i].text = GameEntry.Localization.GetString(texts[i].text);
                 }
             }
@@ -204,16 +185,14 @@ namespace StarForce
             base.OnDepthChanged(uiGroupDepth, depthInUIGroup);
             int deltaDepth = UGuiGroupHelper.DepthFactor * uiGroupDepth + DepthFactor * depthInUIGroup - oldDepth + OriginalDepth;
             GetComponentsInChildren(true, m_CachedCanvasContainer);
-            for (int i = 0; i < m_CachedCanvasContainer.Count; i++)
-            {
+            for (int i = 0; i < m_CachedCanvasContainer.Count; i++) {
                 m_CachedCanvasContainer[i].sortingOrder += deltaDepth;
             }
 
             m_CachedCanvasContainer.Clear();
         }
 
-        private IEnumerator CloseCo(float duration)
-        {
+        private IEnumerator CloseCo(float duration) {
             yield return m_CanvasGroup.FadeToAlpha(0f, duration);
             GameEntry.UI.CloseUIForm(this);
         }

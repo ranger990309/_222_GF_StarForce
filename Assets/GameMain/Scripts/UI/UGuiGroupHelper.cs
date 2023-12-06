@@ -34,6 +34,7 @@ namespace StarForce
 
         private void Awake()
         {
+            Debug.Log("[UGuiGroupHelper] Awake");
             m_CachedCanvas = gameObject.GetOrAddComponent<Canvas>();
             gameObject.GetOrAddComponent<GraphicRaycaster>();
         }
