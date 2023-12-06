@@ -192,6 +192,7 @@ namespace StarForce {
             m_CachedCanvasContainer.Clear();
         }
 
+        //淡入淡出
         private IEnumerator CloseCo(float duration) {
             yield return m_CanvasGroup.FadeToAlpha(0f, duration);
             GameEntry.UI.CloseUIForm(this);
