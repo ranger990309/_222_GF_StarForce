@@ -9,36 +9,29 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-namespace StarForce
-{
-    public class CommonButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
-    {
+namespace StarForce {
+    //通用按钮
+    public class CommonButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler {
         private const float FadeTime = 0.3f;
         private const float OnHoverAlpha = 0.7f;
         private const float OnClickAlpha = 0.6f;
 
-        [SerializeField]
-        private UnityEvent m_OnHover = null;
+        [SerializeField] private UnityEvent m_OnHover = null;
 
-        [SerializeField]
-        private UnityEvent m_OnClick = null;
+        [SerializeField] private UnityEvent m_OnClick = null;
 
         private CanvasGroup m_CanvasGroup = null;
 
-        private void Awake()
-        {
+        private void Awake() {
             m_CanvasGroup = gameObject.GetOrAddComponent<CanvasGroup>();
         }
 
-        private void OnDisable()
-        {
+        private void OnDisable() {
             m_CanvasGroup.alpha = 1f;
         }
 
-        public void OnPointerEnter(PointerEventData eventData)
-        {
-            if (eventData.button != PointerEventData.InputButton.Left)
-            {
+        public void OnPointerEnter(PointerEventData eventData) {
+            if (eventData.button != PointerEventData.InputButton.Left) {
                 return;
             }
 
@@ -47,10 +40,8 @@ namespace StarForce
             m_OnHover.Invoke();
         }
 
-        public void OnPointerExit(PointerEventData eventData)
-        {
-            if (eventData.button != PointerEventData.InputButton.Left)
-            {
+        public void OnPointerExit(PointerEventData eventData) {
+            if (eventData.button != PointerEventData.InputButton.Left) {
                 return;
             }
 
@@ -58,10 +49,8 @@ namespace StarForce
             StartCoroutine(m_CanvasGroup.FadeToAlpha(1f, FadeTime));
         }
 
-        public void OnPointerDown(PointerEventData eventData)
-        {
-            if (eventData.button != PointerEventData.InputButton.Left)
-            {
+        public void OnPointerDown(PointerEventData eventData) {
+            if (eventData.button != PointerEventData.InputButton.Left) {
                 return;
             }
 
@@ -69,10 +58,8 @@ namespace StarForce
             m_OnClick.Invoke();
         }
 
-        public void OnPointerUp(PointerEventData eventData)
-        {
-            if (eventData.button != PointerEventData.InputButton.Left)
-            {
+        public void OnPointerUp(PointerEventData eventData) {
+            if (eventData.button != PointerEventData.InputButton.Left) {
                 return;
             }
 
