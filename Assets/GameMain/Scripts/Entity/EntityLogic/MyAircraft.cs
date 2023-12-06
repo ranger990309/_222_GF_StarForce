@@ -10,13 +10,14 @@ using UnityGameFramework.Runtime;
 
 namespace StarForce
 {
+    //飞机控制
     public class MyAircraft : Aircraft
     {
         [SerializeField]
         private MyAircraftData m_MyAircraftData = null;
 
-        private Rect m_PlayerMoveBoundary = default(Rect);
-        private Vector3 m_TargetPosition = Vector3.zero;
+        private Rect m_PlayerMoveBoundary = default(Rect);//限制玩家飞机移动的边界
+        private Vector3 m_TargetPosition = Vector3.zero;//玩家的目标位置
 
 #if UNITY_2017_3_OR_NEWER
         protected override void OnInit(object userData)
@@ -42,6 +43,7 @@ namespace StarForce
                 return;
             }
 
+            //获取玩家飞机可移动的边界。
             ScrollableBackground sceneBackground = FindObjectOfType<ScrollableBackground>();
             if (sceneBackground == null)
             {
@@ -49,6 +51,7 @@ namespace StarForce
                 return;
             }
 
+            //限制玩家飞机移动的边界
             m_PlayerMoveBoundary = new Rect(sceneBackground.PlayerMoveBoundary.bounds.min.x, sceneBackground.PlayerMoveBoundary.bounds.min.z,
                 sceneBackground.PlayerMoveBoundary.bounds.size.x, sceneBackground.PlayerMoveBoundary.bounds.size.z);
         }
