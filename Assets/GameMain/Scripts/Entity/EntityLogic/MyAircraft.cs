@@ -56,6 +56,7 @@ namespace StarForce
                 sceneBackground.PlayerMoveBoundary.bounds.size.x, sceneBackground.PlayerMoveBoundary.bounds.size.z);
         }
 
+        //处理玩家飞机的输入和移动逻辑
 #if UNITY_2017_3_OR_NEWER
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
 #else
@@ -64,6 +65,7 @@ namespace StarForce
         {
             base.OnUpdate(elapseSeconds, realElapseSeconds);
 
+            //如果鼠标左键按下，获取鼠标位置并将其作为目标位置，同时触发所有武器的攻击。
             if (Input.GetMouseButton(0))
             {
                 Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -75,6 +77,7 @@ namespace StarForce
                 }
             }
 
+            //计算飞机移动的方向和速度，确保飞机在可移动的边界内。
             Vector3 direction = m_TargetPosition - CachedTransform.localPosition;
             if (direction.sqrMagnitude <= Vector3.kEpsilon)
             {

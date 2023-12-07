@@ -10,27 +10,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityGameFramework.Runtime;
 
-namespace StarForce
-{
-    public class HPBarComponent : GameFrameworkComponent
-    {
-        [SerializeField]
-        private HPBarItem m_HPBarItemTemplate = null;
+namespace StarForce {
+    public class HPBarComponent : GameFrameworkComponent {
+        [SerializeField] private HPBarItem m_HPBarItemTemplate = null;//hp模版
+        [SerializeField] private Transform m_HPBarInstanceRoot = null;
+        [SerializeField] private int m_InstancePoolCapacity = 16;
 
-        [SerializeField]
-        private Transform m_HPBarInstanceRoot = null;
-
-        [SerializeField]
-        private int m_InstancePoolCapacity = 16;
-
-        private IObjectPool<HPBarItemObject> m_HPBarItemObjectPool = null;
-        private List<HPBarItem> m_ActiveHPBarItems = null;
+        private IObjectPool<HPBarItemObject> m_HPBarItemObjectPool = null;//对象池
+        private List<HPBarItem> m_ActiveHPBarItems = null;//存着一堆激活HP条
         private Canvas m_CachedCanvas = null;
 
-        private void Start()
-        {
-            if (m_HPBarInstanceRoot == null)
-            {
+        private void Start() {
+            if (m_HPBarInstanceRoot == null) {
                 Log.Error("You must set HP bar instance root first.");
                 return;
             }
@@ -40,35 +31,29 @@ namespace StarForce
             m_ActiveHPBarItems = new List<HPBarItem>();
         }
 
-        private void OnDestroy()
-        {
-        }
+        private void OnDestroy() { }
 
-        private void Update()
-        {
-            for (int i = m_ActiveHPBarItems.Count - 1; i >= 0; i--)
-            {
+        private void Update() {
+            //刷新HP
+            for (int i = m_ActiveHPBarItems.Count - 1; i >= 0; i--) {
                 HPBarItem hpBarItem = m_ActiveHPBarItems[i];
-                if (hpBarItem.Refresh())
-                {
+                if (hpBarItem.Refresh()) {
                     continue;
                 }
 
+                //隐藏HP
                 HideHPBar(hpBarItem);
             }
         }
 
-        public void ShowHPBar(Entity entity, float fromHPRatio, float toHPRatio)
-        {
-            if (entity == null)
-            {
+        public void ShowHPBar(Entity entity, float fromHPRatio, float toHPRatio) {
+            if (entity == null) {
                 Log.Warning("Entity is invalid.");
                 return;
             }
 
             HPBarItem hpBarItem = GetActiveHPBarItem(entity);
-            if (hpBarItem == null)
-            {
+            if (hpBarItem == null) {
                 hpBarItem = CreateHPBarItem(entity);
                 m_ActiveHPBarItems.Add(hpBarItem);
             }
@@ -76,24 +61,19 @@ namespace StarForce
             hpBarItem.Init(entity, m_CachedCanvas, fromHPRatio, toHPRatio);
         }
 
-        private void HideHPBar(HPBarItem hpBarItem)
-        {
+        private void HideHPBar(HPBarItem hpBarItem) {
             hpBarItem.Reset();
             m_ActiveHPBarItems.Remove(hpBarItem);
             m_HPBarItemObjectPool.Unspawn(hpBarItem);
         }
 
-        private HPBarItem GetActiveHPBarItem(Entity entity)
-        {
-            if (entity == null)
-            {
+        private HPBarItem GetActiveHPBarItem(Entity entity) {
+            if (entity == null) {
                 return null;
             }
 
-            for (int i = 0; i < m_ActiveHPBarItems.Count; i++)
-            {
-                if (m_ActiveHPBarItems[i].Owner == entity)
-                {
+            for (int i = 0; i < m_ActiveHPBarItems.Count; i++) {
+                if (m_ActiveHPBarItems[i].Owner == entity) {
                     return m_ActiveHPBarItems[i];
                 }
             }
@@ -101,20 +81,18 @@ namespace StarForce
             return null;
         }
 
-        private HPBarItem CreateHPBarItem(Entity entity)
-        {
+        private HPBarItem CreateHPBarItem(Entity entity) {
             HPBarItem hpBarItem = null;
             HPBarItemObject hpBarItemObject = m_HPBarItemObjectPool.Spawn();
-            if (hpBarItemObject != null)
-            {
+            if (hpBarItemObject != null) {
                 hpBarItem = (HPBarItem)hpBarItemObject.Target;
             }
-            else
-            {
+            else {
                 hpBarItem = Instantiate(m_HPBarItemTemplate);
                 Transform transform = hpBarItem.GetComponent<Transform>();
                 transform.SetParent(m_HPBarInstanceRoot);
                 transform.localScale = Vector3.one;
+                //(为什么要把hpBarItem->hpBarItemObject再丢进对象池,好像拿出来也转换一下??)创建对象池
                 m_HPBarItemObjectPool.Register(HPBarItemObject.Create(hpBarItem), true);
             }
 

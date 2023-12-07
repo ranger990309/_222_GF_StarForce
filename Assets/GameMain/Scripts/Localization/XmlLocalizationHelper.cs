@@ -27,6 +27,7 @@ namespace StarForce
         {
             try
             {
+                //1 获取当前游戏的语言。
                 string currentLanguage = GameEntry.Localization.Language.ToString();
                 XmlDocument xmlDocument = new XmlDocument();
                 xmlDocument.LoadXml(dictionaryString);
