@@ -64,7 +64,7 @@ namespace StarForce
         }
 
         /// <summary>
-        /// 获取是否暂停被其覆盖的界面。
+        /// 获取是否暂停被其覆盖的界面。 
         /// </summary>
         public bool PauseCoveredUIForm
         {

@@ -35,7 +35,8 @@ namespace StarForce
             playSoundParams.VolumeInSoundGroup = 1f;
             playSoundParams.FadeInSeconds = FadeVolumeDuration;
             playSoundParams.SpatialBlend = 0f;
-            s_MusicSerialId = soundComponent.PlaySound(AssetUtility.GetMusicAsset(drMusic.AssetName), "Music", Constant.AssetPriority.MusicAsset, playSoundParams, null, userData);
+            s_MusicSerialId = soundComponent.PlaySound(AssetUtility.GetMusicAsset(drMusic.AssetName), "Music", Constant.AssetPriority.MusicAsset,
+                playSoundParams, null, userData);
             return s_MusicSerialId;
         }
 
@@ -84,7 +85,7 @@ namespace StarForce
             playSoundParams.VolumeInSoundGroup = drUISound.Volume;
             playSoundParams.SpatialBlend = 0f;
             return soundComponent.PlaySound(AssetUtility.GetUISoundAsset(drUISound.AssetName), "UISound", Constant.AssetPriority.UISoundAsset, playSoundParams, userData);
-        }
+        } 
 
         public static bool IsMuted(this SoundComponent soundComponent, string soundGroupName)
         {

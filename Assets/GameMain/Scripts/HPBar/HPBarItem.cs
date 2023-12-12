@@ -40,6 +40,7 @@ namespace StarForce {
             StopAllCoroutines();
 
             m_CachedCanvasGroup.alpha = 1f;
+            //我懂了,如果子弹第1第2颗都打中一个敌机,那血条不用走这里面(意味着不用创建新的血条),若第1和2打中不同的就要创建新的血条
             if (m_Owner != owner || m_OwnerId != owner.Id) {
                 m_HPBar.value = fromHPRatio;
                 m_Owner = owner;
