@@ -15,31 +15,16 @@ namespace StarForce {
         [SerializeField] private TextAsset m_BuildInfoTextAsset = null;//(版本号,各平台Url)
         [SerializeField] private TextAsset m_DefaultDictionaryTextAsset = null;//中文繁文英文
         [SerializeField] private UpdateResourceForm m_UpdateResourceFormTemplate = null;//存储更新资源表单模板
-        private BuildInfo m_BuildInfo = null;//(版本号,各平台Url)
-
-<<<<<<< Updated upstream
-        public BuildInfo BuildInfo {
-            get { return m_BuildInfo; }
-=======
-        [SerializeField]
-        private TextAsset m_DefaultDictionaryTextAsset = null;
-
-        [SerializeField]
-        private UpdateResourceForm m_UpdateResourceFormTemplate = null;
-
-        [SerializeField]private BuildInfo m_BuildInfo = null;
-
-        public BuildInfo BuildInfo
-        {
-            get
-            {
-                return m_BuildInfo;
-            }
->>>>>>> Stashed changes
-        }
 
         public UpdateResourceForm UpdateResourceFormTemplate {
-            get { return m_UpdateResourceFormTemplate; }
+            get => m_UpdateResourceFormTemplate;
+            set => m_UpdateResourceFormTemplate = value;
+        }
+
+        private BuildInfo m_BuildInfo = null;//(版本号,各平台Url)
+
+        public BuildInfo BuildInfo {
+            get { return m_BuildInfo; }
         }
 
         public void InitBuildInfo() {
