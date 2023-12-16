@@ -57,8 +57,13 @@ namespace StarForce {
             if (m_CachedCanvasGroup.alpha <= 0f) {
                 return false;
             }
+<<<<<<< Updated upstream
             
             if (m_Owner != null && Owner.Available && Owner.Id == m_OwnerId) {
+=======
+            if (m_Owner != null && Owner.Available && Owner.Id == m_OwnerId)
+            {
+>>>>>>> Stashed changes
                 Vector3 worldPosition = m_Owner.CachedTransform.position + Vector3.forward;
                 Vector3 screenPosition = GameEntry.Scene.MainCamera.WorldToScreenPoint(worldPosition);
 
