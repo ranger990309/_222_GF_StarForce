@@ -37,7 +37,7 @@ namespace StarForce {
             get { return m_VisibleBoundary; }
         }
 
-        public BoxCollider PlayerMoveBoundary {
+        public BoxCollider PlayerMoveBoundary { 
             get { return m_PlayerMoveBoundary; }
         }
 

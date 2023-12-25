@@ -14,7 +14,7 @@ namespace StarForce {
     public class ProcedureMenu : ProcedureBase {
         private bool m_StartGame = false;
         private MenuForm m_MenuForm = null;
-
+        
         public override bool UseNativeDialog {
             get { return false; }
         }
@@ -62,5 +62,6 @@ namespace StarForce {
 
             m_MenuForm = (MenuForm)ne.UIForm.Logic;
         }
+        
     }
 }

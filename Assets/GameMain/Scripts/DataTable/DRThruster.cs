@@ -45,6 +45,7 @@ namespace StarForce
             private set;
         }
 
+        //从字符串拿数据
         public override bool ParseDataRow(string dataRowString, object userData)
         {
             string[] columnStrings = dataRowString.Split(DataTableExtension.DataSplitSeparators);
@@ -63,6 +64,7 @@ namespace StarForce
             return true;
         }
 
+        //从二进制格式拿数据
         public override bool ParseDataRow(byte[] dataRowBytes, int startIndex, int length, object userData)
         {
             using (MemoryStream memoryStream = new MemoryStream(dataRowBytes, startIndex, length, false))

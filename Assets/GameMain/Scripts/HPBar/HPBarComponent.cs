@@ -30,15 +30,16 @@ namespace StarForce {
             m_HPBarItemObjectPool = GameEntry.ObjectPool.CreateSingleSpawnObjectPool<HPBarItemObject>("HPBarItem", m_InstancePoolCapacity);
             m_ActiveHPBarItems = new List<HPBarItem>();
         }
-
-        private void OnDestroy() { }
+        
+        
+        private void OnDestroy() { } 
 
         private void Update() {
             //刷新HP
             for (int i = m_ActiveHPBarItems.Count - 1; i >= 0; i--) {
                 HPBarItem hpBarItem = m_ActiveHPBarItems[i];
                 if (hpBarItem.Refresh()) {
-                    continue;
+                    continue; 
                 }
 
                 //隐藏HP
@@ -92,7 +93,6 @@ namespace StarForce {
                 Transform transform = hpBarItem.GetComponent<Transform>();
                 transform.SetParent(m_HPBarInstanceRoot);
                 transform.localScale = Vector3.one;
-                //(为什么要把hpBarItem->hpBarItemObject再丢进对象池,好像拿出来也转换一下??)创建对象池
                 m_HPBarItemObjectPool.Register(HPBarItemObject.Create(hpBarItem), true);
             }
 

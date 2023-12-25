@@ -91,7 +91,7 @@ namespace StarForce
 
         private void GeneratePropertyArray()
         {
-
+            
         }
     }
 }
