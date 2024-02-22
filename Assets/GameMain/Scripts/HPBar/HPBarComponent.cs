@@ -12,8 +12,8 @@ using UnityGameFramework.Runtime;
 
 namespace StarForce {
     public class HPBarComponent : GameFrameworkComponent {
-        [SerializeField] private HPBarItem m_HPBarItemTemplate = null;//hp模版
-        [SerializeField] private Transform m_HPBarInstanceRoot = null;
+        [SerializeField] private HPBarItem m_HPBarItemTemplate = null;//hp条的模版
+        [SerializeField] private Transform m_HPBarInstanceRoot = null;//
         [SerializeField] private int m_InstancePoolCapacity = 16;
 
         private IObjectPool<HPBarItemObject> m_HPBarItemObjectPool = null;//对象池

@@ -10,26 +10,17 @@ using System;
 using UnityGameFramework.Runtime;
 using ProcedureOwner = GameFramework.Fsm.IFsm<GameFramework.Procedure.IProcedureManager>;
 
-namespace StarForce
-{
-    public class ProcedureLaunch : ProcedureBase
-    {
-        public override bool UseNativeDialog
-        {
-            get
-            {
-                return true;
-            }
-        }
+namespace StarForce {
+    public class ProcedureLaunch : ProcedureBase {
+        public override bool UseNativeDialog { get { return true; } }
 
-        protected override void OnEnter(ProcedureOwner procedureOwner)
-        {
+        protected override void OnEnter(ProcedureOwner procedureOwner) {
             base.OnEnter(procedureOwner);
 
-            // 构建信息：发布版本时，把一些数据以 Json 的格式写入 Assets/GameMain/Configs/BuildInfo.txt，供游戏逻辑读取
+            // 构建信息：把Assets/GameMain/Configs/BuildInfo.txt里的数据读入游戏内,里面都是游戏版本的一些信息
             GameEntry.BuiltinData.InitBuildInfo();
 
-            // 语言配置：设置当前使用的语言，如果不设置，则默认使用操作系统语言
+            // 设置语言,查看语言配置表里设了啥,默认英语
             InitLanguageSettings();
 
             // 变体配置：根据使用的语言，通知底层加载对应的资源变体
@@ -43,41 +34,32 @@ namespace StarForce
             GameEntry.BuiltinData.InitDefaultDictionary();
         }
 
-        protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)
-        {
+        protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds) {
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
 
             // 运行一帧即切换到 Splash 展示流程
             ChangeState<ProcedureSplash>(procedureOwner);
         }
 
-        private void InitLanguageSettings()
-        {
-            if (GameEntry.Base.EditorResourceMode && GameEntry.Base.EditorLanguage != Language.Unspecified)
-            {
-                // 编辑器资源模式直接使用 Inspector 上设置的语言
-                return;
-            }
-
+        private void InitLanguageSettings() {
+            //1 先检查是不是编辑器模式,是就直接用面板上设置的语言
+            if (GameEntry.Base.EditorResourceMode && GameEntry.Base.EditorLanguage != Language.Unspecified) return;
+            
             Language language = GameEntry.Localization.Language;
-            if (GameEntry.Setting.HasSetting(Constant.Setting.Language))
-            {
-                try
-                {
+            //2 检查一下有没有语言相关的配置表,有就看看应该那游戏设置为什么语言
+            if (GameEntry.Setting.HasSetting(Constant.Setting.Language)) {
+                try {
                     string languageString = GameEntry.Setting.GetString(Constant.Setting.Language);
                     language = (Language)Enum.Parse(typeof(Language), languageString);
                 }
-                catch
-                {
-                }
+                catch { }
             }
 
+            //3 这四种语言之外就用英语
             if (language != Language.English
                 && language != Language.ChineseSimplified
                 && language != Language.ChineseTraditional
-                && language != Language.Korean)
-            {
-                // 若是暂不支持的语言，则使用英语
+                && language != Language.Korean) {
                 language = Language.English;
 
                 GameEntry.Setting.SetString(Constant.Setting.Language, language.ToString());
@@ -85,20 +67,17 @@ namespace StarForce
             }
 
             GameEntry.Localization.Language = language;
-            Log.Info("Init language settings complete, current language is '{0}'.", language.ToString());
+            Log.Info("语言配置完成,现在语言是 '{0}'.", language.ToString());
         }
 
-        private void InitCurrentVariant()
-        {
-            if (GameEntry.Base.EditorResourceMode)
-            {
+        private void InitCurrentVariant() {
+            if (GameEntry.Base.EditorResourceMode) {
                 // 编辑器资源模式不使用 AssetBundle，也就没有变体了
                 return;
             }
 
             string currentVariant = null;
-            switch (GameEntry.Localization.Language)
-            {
+            switch (GameEntry.Localization.Language) {
                 case Language.English:
                     currentVariant = "en-us";
                     break;
@@ -124,8 +103,7 @@ namespace StarForce
             Log.Info("Init current variant complete.");
         }
 
-        private void InitSoundSettings()
-        {
+        private void InitSoundSettings() {
             GameEntry.Sound.Mute("Music", GameEntry.Setting.GetBool(Constant.Setting.MusicMuted, false));
             GameEntry.Sound.SetVolume("Music", GameEntry.Setting.GetFloat(Constant.Setting.MusicVolume, 0.3f));
             GameEntry.Sound.Mute("Sound", GameEntry.Setting.GetBool(Constant.Setting.SoundMuted, false));
