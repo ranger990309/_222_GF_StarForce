@@ -13,6 +13,7 @@ using UnityEngine;
 
 namespace UnityGameFramework.Runtime
 {
+    //这Setting游戏配置的数据是从一个dat文件里来的,我也不知道怎么打开看这文件,
     /// <summary>
     /// 游戏配置组件。
     /// </summary>

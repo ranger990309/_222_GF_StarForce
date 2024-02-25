@@ -7,6 +7,7 @@
 
 using GameFramework.Localization;
 using System;
+using UnityEngine;
 using UnityGameFramework.Runtime;
 using ProcedureOwner = GameFramework.Fsm.IFsm<GameFramework.Procedure.IProcedureManager>;
 
@@ -32,11 +33,13 @@ namespace StarForce {
             // 默认字典：加载默认字典文件 Assets/GameMain/Configs/DefaultDictionary.xml
             // 此字典文件记录了资源更新前使用的各种语言的字符串，会随 App 一起发布，故不可更新
             GameEntry.BuiltinData.InitDefaultDictionary();
+            Debug.Log("流程到了ProcedureLaunch-OnEnter");
         }
 
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds) {
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
 
+            Debug.Log("流程到了ProcedureLaunch-OnUpdate");
             // 运行一帧即切换到 Splash 展示流程
             ChangeState<ProcedureSplash>(procedureOwner);
         }
@@ -70,11 +73,10 @@ namespace StarForce {
             Log.Info("语言配置完成,现在语言是 '{0}'.", language.ToString());
         }
 
+        //给资源组件语言信息
         private void InitCurrentVariant() {
-            if (GameEntry.Base.EditorResourceMode) {
-                // 编辑器资源模式不使用 AssetBundle，也就没有变体了
-                return;
-            }
+            //1 编辑器资源模式不使用 AssetBundle，也就没有变体了
+            if (GameEntry.Base.EditorResourceMode) return;
 
             string currentVariant = null;
             switch (GameEntry.Localization.Language) {
@@ -99,18 +101,21 @@ namespace StarForce {
                     break;
             }
 
+            //???????????什么意思啊这里,拉资源要此时语言?,我觉得吧这里是设置那几百个翻译的语言资源,把对应语言的资源导进来
             GameEntry.Resource.SetCurrentVariant(currentVariant);
-            Log.Info("Init current variant complete.");
+            Log.Info("?????资源组件要语言干嘛,我怀疑是给拉语言资源准备的");
         }
 
+        //从c盘GameFrameworkSetting.dat拿到数据,设置好声音设置
         private void InitSoundSettings() {
+            //游戏配置项的文件在哪啊(在这,但我不知道怎么查看里面的dat数据 C:\Users\Sumol\AppData\LocalLow\Game Framework\Star Force,就当是注册表吧)
             GameEntry.Sound.Mute("Music", GameEntry.Setting.GetBool(Constant.Setting.MusicMuted, false));
             GameEntry.Sound.SetVolume("Music", GameEntry.Setting.GetFloat(Constant.Setting.MusicVolume, 0.3f));
             GameEntry.Sound.Mute("Sound", GameEntry.Setting.GetBool(Constant.Setting.SoundMuted, false));
             GameEntry.Sound.SetVolume("Sound", GameEntry.Setting.GetFloat(Constant.Setting.SoundVolume, 1f));
             GameEntry.Sound.Mute("UISound", GameEntry.Setting.GetBool(Constant.Setting.UISoundMuted, false));
             GameEntry.Sound.SetVolume("UISound", GameEntry.Setting.GetFloat(Constant.Setting.UISoundVolume, 1f));
-            Log.Info("Init sound settings complete.");
+            Log.Info("初始化声音设置完成");
         }
     }
 }

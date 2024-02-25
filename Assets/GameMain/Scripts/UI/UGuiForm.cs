@@ -16,10 +16,10 @@ namespace StarForce {
         public const int DepthFactor = 100;
         private const float FadeTime = 0.3f;
 
-        private static Font s_MainFont = null;
-        private Canvas m_CachedCanvas = null;
-        private CanvasGroup m_CanvasGroup = null;
-        private List<Canvas> m_CachedCanvasContainer = new List<Canvas>();
+        [SerializeField]private static Font s_MainFont = null;//UI字体
+        [SerializeField]private Canvas m_CachedCanvas = null;
+        [SerializeField]private CanvasGroup m_CanvasGroup = null;
+        [SerializeField]private List<Canvas> m_CachedCanvasContainer = new List<Canvas>();
 
         public int OriginalDepth { get; private set; }
 
@@ -48,7 +48,7 @@ namespace StarForce {
 
         public static void SetMainFont(Font mainFont) {
             if (mainFont == null) {
-                Log.Error("Main font is invalid.");
+                Debug.LogError("Main font 错误");
                 return;
             }
 

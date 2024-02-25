@@ -18,11 +18,11 @@ namespace UnityGameFramework.Runtime
     /// </summary>
     public class DefaultSettingHelper : SettingHelperBase
     {
-        private const string SettingFileName = "GameFrameworkSetting.dat";
+        [SerializeField]private const string SettingFileName = "GameFrameworkSetting.dat";
 
-        private string m_FilePath = null;
-        private DefaultSetting m_Settings = null;
-        private DefaultSettingSerializer m_Serializer = null;
+        [SerializeField]private string m_FilePath = null;
+        [SerializeField]private DefaultSetting m_Settings = null;
+        [SerializeField]private DefaultSettingSerializer m_Serializer = null;
 
         /// <summary>
         /// 获取游戏配置项数量。

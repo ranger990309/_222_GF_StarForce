@@ -24,7 +24,7 @@ namespace StarForce
             //GameEntry.Event.Subscribe(ResourceVerifySuccessEventArgs.EventId, OnResourceVerifySuccess);
             //GameEntry.Event.Subscribe(ResourceVerifyFailureEventArgs.EventId, OnResourceVerifyFailure);
 
-            m_VerifyResourcesComplete = false;
+            m_VerifyResourcesComplete = true;
             //GameEntry.Resource.VerifyResources(OnVerifyResourcesComplete);
         }
 

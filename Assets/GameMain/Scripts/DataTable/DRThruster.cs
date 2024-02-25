@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2021-06-16 21:54:35.638
+// 生成时间：2024-02-24 13:41:59.107
 //------------------------------------------------------------
 
 using GameFramework;
@@ -45,7 +45,6 @@ namespace StarForce
             private set;
         }
 
-        //从字符串拿数据
         public override bool ParseDataRow(string dataRowString, object userData)
         {
             string[] columnStrings = dataRowString.Split(DataTableExtension.DataSplitSeparators);
@@ -64,7 +63,6 @@ namespace StarForce
             return true;
         }
 
-        //从二进制格式拿数据
         public override bool ParseDataRow(byte[] dataRowBytes, int startIndex, int length, object userData)
         {
             using (MemoryStream memoryStream = new MemoryStream(dataRowBytes, startIndex, length, false))

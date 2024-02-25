@@ -5,27 +5,18 @@ using UnityEngine;
 using UnityGameFramework.Runtime;
 using ProcedureOwner = GameFramework.Fsm.IFsm<GameFramework.Procedure.IProcedureManager>;
 
-namespace StarForce
-{
-    public class ProcedureUpdateResources : ProcedureBase
-    {
-        private bool m_UpdateResourcesComplete = false;
-        private int m_UpdateCount = 0;
-        private long m_UpdateTotalCompressedLength = 0L;
-        private int m_UpdateSuccessCount = 0;
-        private List<UpdateLengthData> m_UpdateLengthData = new List<UpdateLengthData>();
+namespace StarForce {
+    public class ProcedureUpdateResources : ProcedureBase {
+        private bool m_UpdateResourcesComplete = false;//更新资源完毕
+        private int m_UpdateCount = 0;//需要更新的数量
+        private long m_UpdateTotalCompressedLength = 0L;//压缩总长度
+        private int m_UpdateSuccessCount = 0;//成功更新的数量
+        private List<UpdateLengthData> m_UpdateLengthData = new List<UpdateLengthData>();//正在更新的资源列表
         private UpdateResourceForm m_UpdateResourceForm = null;
 
-        public override bool UseNativeDialog
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool UseNativeDialog { get { return true; } }
 
-        protected override void OnEnter(ProcedureOwner procedureOwner)
-        {
+        protected override void OnEnter(ProcedureOwner procedureOwner) {
             base.OnEnter(procedureOwner);
 
             m_UpdateResourcesComplete = false;
@@ -42,29 +33,27 @@ namespace StarForce
             GameEntry.Event.Subscribe(ResourceUpdateSuccessEventArgs.EventId, OnResourceUpdateSuccess);
             GameEntry.Event.Subscribe(ResourceUpdateFailureEventArgs.EventId, OnResourceUpdateFailure);
 
-            if (Application.internetReachability == NetworkReachability.ReachableViaCarrierDataNetwork)
-            {
-                GameEntry.UI.OpenDialog(new DialogParams
-                {
+            //1 游戏处于可联网模式的情况下,就打开UI面板(模式2UI,)
+            if (Application.internetReachability == NetworkReachability.ReachableViaCarrierDataNetwork) {
+                GameEntry.UI.OpenDialog(new DialogParams {
                     Mode = 2,
                     Title = GameEntry.Localization.GetString("UpdateResourceViaCarrierDataNetwork.Title"),
                     Message = GameEntry.Localization.GetString("UpdateResourceViaCarrierDataNetwork.Message"),
                     ConfirmText = GameEntry.Localization.GetString("UpdateResourceViaCarrierDataNetwork.UpdateButton"),
                     OnClickConfirm = StartUpdateResources,
                     CancelText = GameEntry.Localization.GetString("UpdateResourceViaCarrierDataNetwork.QuitButton"),
-                    OnClickCancel = delegate (object userData) { UnityGameFramework.Runtime.GameEntry.Shutdown(ShutdownType.Quit); },
+                    OnClickCancel = delegate(object userData) { UnityGameFramework.Runtime.GameEntry.Shutdown(ShutdownType.Quit); },
                 });
 
                 return;
             }
 
+            //2 开始更新资源
             StartUpdateResources(null);
         }
 
-        protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)
-        {
-            if (m_UpdateResourceForm != null)
-            {
+        protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown) {
+            if (m_UpdateResourceForm != null) {
                 Object.Destroy(m_UpdateResourceForm.gameObject);
                 m_UpdateResourceForm = null;
             }
@@ -77,44 +66,38 @@ namespace StarForce
             base.OnLeave(procedureOwner, isShutdown);
         }
 
-        protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)
-        {
+        protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds) {
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
 
-            if (!m_UpdateResourcesComplete)
-            {
-                return;
-            }
+            if (!m_UpdateResourcesComplete) return;
 
             ChangeState<ProcedurePreload>(procedureOwner);
         }
 
-        private void StartUpdateResources(object userData)
-        {
-            if (m_UpdateResourceForm == null)
-            {
+        //点击UI面板的确定升级的按钮回调
+        private void StartUpdateResources(object userData) {
+            if (m_UpdateResourceForm == null) {
                 m_UpdateResourceForm = Object.Instantiate(GameEntry.BuiltinData.UpdateResourceFormTemplate);
             }
 
-            Log.Info("Start update resources...");
+            Debug.Log("正式开始升级资源...");
             GameEntry.Resource.UpdateResources(OnUpdateResourcesComplete);
         }
 
-        private void RefreshProgress()
-        {
+        private void RefreshProgress() {
             long currentTotalUpdateLength = 0L;
-            for (int i = 0; i < m_UpdateLengthData.Count; i++)
-            {
+            for (int i = 0; i < m_UpdateLengthData.Count; i++) {
                 currentTotalUpdateLength += m_UpdateLengthData[i].Length;
             }
 
             float progressTotal = (float)currentTotalUpdateLength / m_UpdateTotalCompressedLength;
-            string descriptionText = GameEntry.Localization.GetString("UpdateResource.Tips", m_UpdateSuccessCount.ToString(), m_UpdateCount.ToString(), GetByteLengthString(currentTotalUpdateLength), GetByteLengthString(m_UpdateTotalCompressedLength), progressTotal, GetByteLengthString((int)GameEntry.Download.CurrentSpeed));
+            string descriptionText = GameEntry.Localization.GetString("UpdateResource.Tips", m_UpdateSuccessCount.ToString(),
+                m_UpdateCount.ToString(), GetByteLengthString(currentTotalUpdateLength), GetByteLengthString(m_UpdateTotalCompressedLength),
+                progressTotal, GetByteLengthString((int)GameEntry.Download.CurrentSpeed));
             m_UpdateResourceForm.SetProgress(progressTotal, descriptionText);
         }
 
-        private string GetByteLengthString(long byteLength)
-        {
+        private string GetByteLengthString(long byteLength) {
             if (byteLength < 1024L) // 2 ^ 10
             {
                 return Utility.Text.Format("{0} Bytes", byteLength);
@@ -148,28 +131,25 @@ namespace StarForce
             return Utility.Text.Format("{0:F2} EB", byteLength / 1152921504606846976f);
         }
 
-        private void OnUpdateResourcesComplete(GameFramework.Resource.IResourceGroup resourceGroup, bool result)
-        {
-            if (result)
-            {
+        //更新资源完成
+        private void OnUpdateResourcesComplete(GameFramework.Resource.IResourceGroup resourceGroup, bool result) {
+            if (result) {
                 m_UpdateResourcesComplete = true;
-                Log.Info("Update resources complete with no errors.");
+                Debug.LogError("更新资源完成无错误");
             }
-            else
-            {
-                Log.Error("Update resources complete with errors.");
+            else {
+                Log.Error("更新资源完成出现错误!!!!!!!");
             }
         }
 
-        private void OnResourceUpdateStart(object sender, GameEventArgs e)
-        {
+        //刚开始更新资源
+        private void OnResourceUpdateStart(object sender, GameEventArgs e) {
             ResourceUpdateStartEventArgs ne = (ResourceUpdateStartEventArgs)e;
 
-            for (int i = 0; i < m_UpdateLengthData.Count; i++)
-            {
-                if (m_UpdateLengthData[i].Name == ne.Name)
-                {
-                    Log.Warning("Update resource '{0}' is invalid.", ne.Name);
+            //列表里没有这个资源才可以去下载这个资源
+            for (int i = 0; i < m_UpdateLengthData.Count; i++) {
+                if (m_UpdateLengthData[i].Name == ne.Name) {
+                    Debug.LogWarning($"更新资源错误` '{ne.Name}' ");
                     m_UpdateLengthData[i].Length = 0;
                     RefreshProgress();
                     return;
@@ -179,60 +159,56 @@ namespace StarForce
             m_UpdateLengthData.Add(new UpdateLengthData(ne.Name));
         }
 
-        private void OnResourceUpdateChanged(object sender, GameEventArgs e)
-        {
+        //资源更新中....
+        private void OnResourceUpdateChanged(object sender, GameEventArgs e) {
             ResourceUpdateChangedEventArgs ne = (ResourceUpdateChangedEventArgs)e;
 
-            for (int i = 0; i < m_UpdateLengthData.Count; i++)
-            {
-                if (m_UpdateLengthData[i].Name == ne.Name)
-                {
+            //持续更新资源列表里对应的资源的大小信息
+            for (int i = 0; i < m_UpdateLengthData.Count; i++) {
+                if (m_UpdateLengthData[i].Name == ne.Name) {
                     m_UpdateLengthData[i].Length = ne.CurrentLength;
-                    RefreshProgress();
+                    RefreshProgress();//刷新进度条
                     return;
                 }
             }
 
-            Log.Warning("Update resource '{0}' is invalid.", ne.Name);
+            Debug.LogError($"更新资源错误 '{ne.Name}' ");
         }
 
-        private void OnResourceUpdateSuccess(object sender, GameEventArgs e)
-        {
+        //资源更新成功
+        private void OnResourceUpdateSuccess(object sender, GameEventArgs e) {
             ResourceUpdateSuccessEventArgs ne = (ResourceUpdateSuccessEventArgs)e;
-            Log.Info("Update resource '{0}' success.", ne.Name);
+            Debug.Log($"更新资源成功 '{ne.Name}' .");
 
-            for (int i = 0; i < m_UpdateLengthData.Count; i++)
-            {
-                if (m_UpdateLengthData[i].Name == ne.Name)
-                {
+            //持续更新资源列表里对应的资源的大小信息等
+            for (int i = 0; i < m_UpdateLengthData.Count; i++) {
+                if (m_UpdateLengthData[i].Name == ne.Name) {
                     m_UpdateLengthData[i].Length = ne.CompressedLength;
                     m_UpdateSuccessCount++;
-                    RefreshProgress();
+                    RefreshProgress();//进度条刷新
                     return;
                 }
             }
 
-            Log.Warning("Update resource '{0}' is invalid.", ne.Name);
+            Debug.LogWarning($"更新资源错误 '{ne.Name}' ");
         }
 
-        private void OnResourceUpdateFailure(object sender, GameEventArgs e)
-        {
+        //更新资源失败(会不断重试)
+        private void OnResourceUpdateFailure(object sender, GameEventArgs e) {
             ResourceUpdateFailureEventArgs ne = (ResourceUpdateFailureEventArgs)e;
-            if (ne.RetryCount >= ne.TotalRetryCount)
-            {
-                Log.Error("Update resource '{0}' failure from '{1}' with error message '{2}', retry count '{3}'.", ne.Name, ne.DownloadUri, ne.ErrorMessage, ne.RetryCount.ToString());
+            //超过规定的重试次数就不要重试了
+            if (ne.RetryCount >= ne.TotalRetryCount) {
+                Debug.LogError($"更新资源失败 '{ne.Name}' 地址是 '{ne.DownloadUri}' 错误信息是 '{ne.ErrorMessage}', 重试次数 '{ne.RetryCount.ToString()}'.超限制了,不要再试了");
                 return;
             }
-            else
-            {
-                Log.Info("Update resource '{0}' failure from '{1}' with error message '{2}', retry count '{3}'.", ne.Name, ne.DownloadUri, ne.ErrorMessage, ne.RetryCount.ToString());
+            else {
+                Debug.Log($"更新资源 '{ne.Name}' 失败,地址是 '{ne.DownloadUri}' 错误信息是 '{ne.ErrorMessage}', 重试次数 '{ne.RetryCount.ToString()}'.");
             }
 
-            for (int i = 0; i < m_UpdateLengthData.Count; i++)
-            {
-                if (m_UpdateLengthData[i].Name == ne.Name)
-                {
-                    m_UpdateLengthData.Remove(m_UpdateLengthData[i]);
+            //走到这说明更新资源失败但可重试次数还没超过规定的数量,还可以重试
+            for (int i = 0; i < m_UpdateLengthData.Count; i++) {
+                if (m_UpdateLengthData[i].Name == ne.Name) {
+                    m_UpdateLengthData.Remove(m_UpdateLengthData[i]);//
                     RefreshProgress();
                     return;
                 }
@@ -241,28 +217,16 @@ namespace StarForce
             Log.Warning("Update resource '{0}' is invalid.", ne.Name);
         }
 
-        private class UpdateLengthData
-        {
+        private class UpdateLengthData {
             private readonly string m_Name;
 
-            public UpdateLengthData(string name)
-            {
+            public UpdateLengthData(string name) {
                 m_Name = name;
             }
 
-            public string Name
-            {
-                get
-                {
-                    return m_Name;
-                }
-            }
+            public string Name { get { return m_Name; } }
 
-            public int Length
-            {
-                get;
-                set;
-            }
+            public int Length { get; set; }
         }
     }
 }
